@@ -1,0 +1,12 @@
+tensorflow
+pandas
+numpy
+dvc
+notebook
+matplotlib
+seaborn
+pyYAML
+tqdm
+Flask
+Flask-Cors
+-e .
