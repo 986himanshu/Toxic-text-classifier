@@ -9,4 +9,6 @@ pyYAML
 tqdm
 Flask
 Flask-Cors
+transformers
+
 -e .
