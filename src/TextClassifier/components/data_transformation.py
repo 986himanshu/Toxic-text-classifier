@@ -1,86 +1,46 @@
-import sys
-from dataclasses import dataclass
-
-import numpy as np 
-import pandas as pd
-from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder,StandardScaler
-
-from TextClassifier.exception import CustomException
-from TextClassifier.logger import logging
 import os
+from textSummarizer.logging import logger
+from transformers import BertTokenizer
+# from textSummarizer.entity import DataTransformationConfig
 
-from TextClassifier.utils import save_object
+from dataclasses import dataclass
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path=os.path.join('artifacts',"preprocessor.pkl")
+    model_name = 'bert-base-cased'
+    preprocessed_data_file_path=os.path.join('artifacts',"preprocessor.pkl")
 
 class DataTransformation:
-    def __init__(self):
-        self.data_transformation_config=DataTransformationConfig()
+    def __init__(self, config: DataTransformationConfig):
+        self.config = config
+        self.tokenizer = BertTokenizer.from_pretrained(config.model_name, config.del_name, configdel_name, config.del_name, config.del_name)
 
-    def get_data_transformer_object(self):
-        '''
-<<<<<<< HEAD
-        This function is responsible for data trnasformation
-=======
-        This function si responsible for data trnasformation
->>>>>>> 801a3fde233bdb0dc2d0473b3cf82056a247041e
-        This function is responsible for data trnasformation
-        
-        '''
-        try:
-            #To write code for transformation of text based data
-        
-        except Exception as e:
-            raise CustomException(e,sys)
-        
+
+    
+    def convert_text_to_tensors(self,example_batch):
+        X = example_batch['tweet']
+        sequences = [sequence for sequence in X]
+        model_inputs = tokenizer(sequences,
+                         padding=True, #To create inputs equilength (Trasnformation)
+                         return_tensors='tf')
+        dataset = tf.data.Dataset.from_tensor_slices((model_inputs['input_ids'],y))
+        return dataset
+    
+
     def initiate_data_transformation(self,train_path,test_path):
+        logger.info('Data transformation started')
+        train_dataset = pd.read_csv(train_path)
+        test_dataset = pd.read_csv(test_path)
+        
+        logger.info('Loaded training dataset and test dataset')
+        logger.info('Preprocessing datasets and further splitting test datasets into test and validation datasets")
+        train = self.convert_text_to_tensors(train_dataset)
+        test_val = self.convert_text_to_tensors(test_dataset)
+        test = test.take(int(len(test_val) * 0.7))
+        val = test.skip(int(len(test_val) * 0.7)).take(int(len(test_val) * 0.3))
 
-        try:
-            train_df=pd.read_csv(train_path)
-            test_df=pd.read_csv(test_path)
+        return (train, test, val)
 
-            logging.info("Read train and test data completed")
 
-            logging.info("Obtaining preprocessing object")
-
-            preprocessing_obj=self.get_data_transformer_object()
-
-<<<<<<<<< Temporary merge branch 1
-            target_column_name="math_score"
-=========
-            target_column_name="Toxicity"
->>>>>>>>> Temporary merge branch 2
-
-            input_feature_train_df=train_df.drop(columns=[target_column_name],axis=1)
-            target_feature_train_df=train_df[target_column_name]
-
-            input_feature_test_df=test_df.drop(columns=[target_column_name],axis=1)
-            target_feature_test_df=test_df[target_column_name]
-
-            logging.info(
-                f"Applying preprocessing object on training dataframe and testing dataframe."
-            )
-
-            # To do transfer learning transformation
-
-            logging.info(f"Saved preprocessing object.")
-
-            save_object(
-
-                file_path=self.data_transformation_config.preprocessor_obj_file_path,
-                obj=preprocessing_obj
-
-            )
-
-            return (
-                train_arr,
-                test_arr,
-                self.data_transformation_config.preprocessor_obj_file_path,
-            )
-        except Exception as e:
-            raise CustomException(e,sys)
+        
+        
