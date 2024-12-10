@@ -10,5 +10,5 @@ tqdm
 Flask
 Flask-Cors
 transformers
-
+scikit-learn
 -e .

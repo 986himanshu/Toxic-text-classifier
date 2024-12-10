@@ -1,11 +1,14 @@
 import os
 import sys
 from TextClassifier.exception import CustomException
-from TextClassifier.logger import logging
+from TextClassifier.logger import *
+from TextClassifier.components.model_trainer import ModelTrainer
+from TextClassifier.components.data_transformation import DataTransformation
+from TextClassifier.utils import *
 import pandas as pd
-
-from sklearn.model_selection import train_test_split
+from TextClassifier.components.model_evaluation import ModelEvaluator
 from dataclasses import dataclass
+from sklearn.model_selection import train_test_split
 
 # from TextClassifier.components.data_transformation import DataTransformation
 
@@ -51,11 +54,20 @@ if __name__=="__main__":
     obj=DataIngestion()
     train_data,test_data=obj.initiate_data_ingestion()
 
-    # data_transformation=DataTransformation()
-    # train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
+    data_transformation=DataTransformation()
+    train,test,val=data_transformation.initiate_data_transformation(obj.ingestion_config.train_data_path,obj.ingestion_config.test_data_path)
 
-    # modeltrainer=ModelTrainer()
-    # print(modeltrainer.initiate_model_trainer(train_arr,test_arr))
+    model_trained = modeltrainer=ModelTrainer(train,test,val)
+    model_trained.buildModel()
+
+    model_eval = ModelEvaluator(model_trained.ModelTrainerConfig)
+
+    (precision, recall, accuracy) = model_eval.evaluate_model()
+
+    save_to_csv(precision, recall, accuracy)
+
+
+
 
 
 
