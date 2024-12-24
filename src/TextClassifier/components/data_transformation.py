@@ -23,7 +23,7 @@ class DataTransformation:
         y = example_batch['toxicity']
         sequences = [sequence for sequence in X]
         model_inputs = self.tokenizer(sequences,
-                         padding=True, #To create inputs equilength (Trasnformation)
+                         padding='max_length', #To create inputs equilength (Trasnformation)
                          return_tensors='tf')
         dataset = tf.data.Dataset.from_tensor_slices((model_inputs['input_ids'],y))
         return dataset

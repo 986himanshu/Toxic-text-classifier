@@ -57,14 +57,19 @@ if __name__=="__main__":
     data_transformation=DataTransformation()
     train,test,val=data_transformation.initiate_data_transformation(obj.ingestion_config.train_data_path,obj.ingestion_config.test_data_path)
 
-    model_trained = modeltrainer=ModelTrainer(train,test,val)
-    model_trained.buildModel()
+    model_trained =ModelTrainer(train,test,val)
+    model_trained.build_model()
 
     model_eval = ModelEvaluator(model_trained.ModelTrainerConfig)
 
     (precision, recall, accuracy) = model_eval.evaluate_model()
 
-    save_to_csv(precision, recall, accuracy)
+    data = [{'name': 'precision', 'value': precision.numpy() },
+    {'name': 'recall', 'value': recall.numpy() },
+    {'name': 'accuracy', 'value': accuracy.numpy() },]
+    eval_matrix = pd.DataFrame(data)
+
+    eval_matrix.to_csv('..\artifacts\data.csv')
 
 
 

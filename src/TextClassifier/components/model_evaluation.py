@@ -5,7 +5,7 @@ from tensorflow.keras.metrics import Precision, Recall, BinaryAccuracy
 class ModelEvaluator:
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
-        self.model = load_model(self.config.model_path)
+        self.model = load_object(self.config.model_path)
 
     def evaluate_model(self):
         pre = Precision()

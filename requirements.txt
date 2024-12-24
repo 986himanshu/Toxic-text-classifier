@@ -11,4 +11,7 @@ Flask
 Flask-Cors
 transformers
 scikit-learn
+dill
+dataclasses
+tensorflow
 -e .

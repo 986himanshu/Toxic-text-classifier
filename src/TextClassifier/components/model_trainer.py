@@ -1,6 +1,7 @@
 import os
 import sys
 from dataclasses import dataclass
+from TextClassifier.utils import *
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Embedding, Bidirectional, Dense
@@ -51,7 +52,7 @@ class ModelTrainer:
         history = self.model.fit(self.train, epochs=1, batch_size=16, validation_data=self.validation)
         save_object(
                 file_path=self.ModelTrainerConfig.trained_model_path,
-                obj=best_model
+                obj=self.model
             )
         
 
